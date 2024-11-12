@@ -2,7 +2,6 @@ import axios from 'axios';
 
 // Function to check and rerfesh token if it's about to expire
 export function isUserLoggedIn() {
-  console.log(document.cookie);
   return document.cookie.split('; ').some((row) => row.startsWith('jwt='));
 }
 
@@ -24,7 +23,6 @@ export async function checkAndRefreshToken() {
     //   await axios.get('/api/v1/users/refresh-token', { withCredentials: true });
     // }
   } catch (error) {
-    console.error('Error refreshing token: ', error);
   }
 }
 

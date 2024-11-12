@@ -64,7 +64,6 @@ userSchema.pre('save', async function (next) {
 
   // hashing password with the salt of 12
   this.password = await bcrypt.hash(this.password, 12);
-  console.log(this.password);
   // Research about salt and cost in hashing
 
   // only having one password property
@@ -123,7 +122,6 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
       this.passwordChangedAt.getTime() / 1000,
       10,
     );
-    console.log(changedTimestamp, JWTTimestamp);
     return JWTTimestamp < changedTimestamp; // returns true
   }
 
@@ -151,7 +149,6 @@ userSchema.methods.createPasswordResetToken = function () {
     .update(resetToken)
     .digest('hex');
 
-  console.log({ resetToken }, this.passwordResetToken);
   this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
   //after this we have to save it in the database schema, so that we can compare it
   // with the token that the user provide

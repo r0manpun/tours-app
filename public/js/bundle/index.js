@@ -584,15 +584,13 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 }
 
 },{}],"eQGd2":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 var _polyfill = require("@babel/polyfill");
 var _loginJs = require("./login.js");
 var _mapboxJs = require("./mapbox.js");
 var _updateSettingsJs = require("./updateSettings.js");
 var _stripeJs = require("./stripe.js");
 var _signupJs = require("./signup.js");
-var _axios = require("axios");
-var _axiosDefault = parcelHelpers.interopDefault(_axios);
+var _refreshAccessTokenJs = require("./refreshAccessToken.js");
 // DOM ELEMENTS
 const mapBox = document.getElementById("map");
 const loginForm = document.querySelector(".form--login");
@@ -601,6 +599,7 @@ const userDataForm = document.querySelector(".form-user-data");
 const userPasswordForm = document.querySelector(".form-user-password");
 const bookBtn = document.getElementById("book-tour");
 const signupForm = document.querySelector(".form--signup");
+setInterval((0, _refreshAccessTokenJs.checkAndRefreshToken), 10000);
 // DELEGATION
 if (mapBox) {
     const locations = JSON.parse(mapBox.dataset.locations);
@@ -620,7 +619,6 @@ if (userDataForm) userDataForm.addEventListener("submit", (e)=>{
     form.append("name", document.getElementById("name").value);
     form.append("email", document.getElementById("email").value);
     form.append("photo", document.getElementById("photo").files[0]);
-    console.log(form);
     // const name = document.getElementById('name').value;
     // const email = document.getElementById('email').value;
     // updateSettings({ name, email }, 'data');
@@ -658,7 +656,7 @@ if (signupForm) signupForm.addEventListener("submit", (e)=>{
     (0, _signupJs.signup)(name, email, password, passwordConfirm);
 });
 
-},{"@babel/polyfill":"5iLX0","./login.js":"4sz0U","./mapbox.js":"dNGFO","./updateSettings.js":"gxJe1","./stripe.js":"87I8d","./signup.js":"jYfzW","axios":"7x7Lf","@parcel/transformer-js/src/esmodule-helpers.js":"hVg3e"}],"5iLX0":[function(require,module,exports) {
+},{"@babel/polyfill":"5iLX0","./login.js":"4sz0U","./mapbox.js":"dNGFO","./updateSettings.js":"gxJe1","./stripe.js":"87I8d","./signup.js":"jYfzW","./refreshAccessToken.js":"5hJwn"}],"5iLX0":[function(require,module,exports) {
 "use strict";
 require("f50de0aa433a589b");
 var _global = _interopRequireDefault(require("4142986752a079d4"));
@@ -7650,7 +7648,6 @@ var _axios = require("axios");
 var _axiosDefault = parcelHelpers.interopDefault(_axios);
 var _alert = require("./alert");
 const login = async function(email, password) {
-    console.log(email, password);
     try {
         const res = await (0, _axiosDefault.default)({
             method: "POST",
@@ -12749,18 +12746,16 @@ const bookTour = async (tourId)=>{
     try {
         // 1) Get checkout session from the API
         const session = await (0, _axiosDefault.default)(`http://127.0.0.1:3000/api/v1/bookings/checkout-session/${tourId}`);
-        console.log(session);
         // 2) Create checkout form + charge the credit card
         await stripe.redirectToCheckout({
             sessionId: session.data.session.id
         });
     } catch (error) {
-        console.log(error);
         (0, _alert.showAlert)("error", error);
     }
 };
 
-},{"axios":"7x7Lf","@parcel/transformer-js/src/esmodule-helpers.js":"hVg3e","./alert":"lvw6Z"}],"jYfzW":[function(require,module,exports) {
+},{"axios":"7x7Lf","./alert":"lvw6Z","@parcel/transformer-js/src/esmodule-helpers.js":"hVg3e"}],"jYfzW":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "signup", ()=>signup);
@@ -12792,7 +12787,6 @@ const signup = async function(name, email, password, passwordConfirm) {
 };
 const verifyEmail = async (token)=>{
     try {
-        console.log(token);
         const res = await (0, _axiosDefault.default)({
             method: "PATCH",
             url: "http://127.0.0.1:3000/api/v1/users/verify-email",
@@ -12801,11 +12795,37 @@ const verifyEmail = async (token)=>{
             }
         });
     } catch (error) {
-        console.error(error);
         alert("Verification failed. Please try again later.");
     }
 };
 
-},{"axios":"7x7Lf","./alert":"lvw6Z","@parcel/transformer-js/src/esmodule-helpers.js":"hVg3e"}]},["e9pVE","eQGd2"], "eQGd2", "parcelRequire8a7e")
+},{"axios":"7x7Lf","./alert":"lvw6Z","@parcel/transformer-js/src/esmodule-helpers.js":"hVg3e"}],"5hJwn":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+// Function to check and rerfesh token if it's about to expire
+parcelHelpers.export(exports, "isUserLoggedIn", ()=>isUserLoggedIn);
+parcelHelpers.export(exports, "checkAndRefreshToken", ()=>checkAndRefreshToken) // Check token expiration every 10 seconds
+;
+var _axios = require("axios");
+var _axiosDefault = parcelHelpers.interopDefault(_axios);
+function isUserLoggedIn() {
+    return document.cookie.split("; ").some((row)=>row.startsWith("jwt="));
+}
+async function checkAndRefreshToken() {
+    try {
+        const token = document.cookie.split("; ").find((row)=>row.startsWith("jwt="))?.split("=")[1];
+        if (!token) await (0, _axiosDefault.default).get("/api/v1/users/refresh-token", {
+            withCredentials: true
+        });
+    // const { exp } = JSON.parse(atob(token.split('.')[1])); // Decode the expiration form token
+    // const timeLeft = exp * 1000 - Date.now();
+    // if (timeLeft < 5000) {
+    //   // If the token is close to expiring (5 seconds left)
+    //   await axios.get('/api/v1/users/refresh-token', { withCredentials: true });
+    // }
+    } catch (error) {}
+}
+
+},{"axios":"7x7Lf","@parcel/transformer-js/src/esmodule-helpers.js":"hVg3e"}]},["e9pVE","eQGd2"], "eQGd2", "parcelRequire8a7e")
 
 //# sourceMappingURL=index.js.map

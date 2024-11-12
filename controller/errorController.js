@@ -16,7 +16,6 @@ const handleDuplicateFieldsDB = (err) => {
 
 const handleValidationErrorDB = (err) => {
   const errors = Object.values(err.errors).map((el) => el.message);
-  console.log(errors);
   const message = `Invalid input data. ${errors.join('. ')}`;
   return new AppError(message, 400);
 };
@@ -32,7 +31,7 @@ const handleJWTExpiredError = (err) => {
 // Handling Error for Development
 const sendErrorDev = (err, req, res) => {
   if (!req.originalUrl) {
-    console.error('originalUrl is undefined on the request object');
+    // console.error('originalUrl is undefined on the request object');
     res.status(500).json({
       status: 'error',
       message: 'Internal Server Error',

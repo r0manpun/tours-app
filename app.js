@@ -6,6 +6,8 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
+const compression = require('compression');
+
 // view wala
 const path = require('path');
 
@@ -75,6 +77,8 @@ app.use(
 if (process.env.NODE_ENV.trim() === 'production') {
   app.use(morgan('dev'));
 }
+
+app.use(compression()); // will compress all the text that will be sent to the client
 
 // E) test middleware, adds the request time to the request body
 app.use((req, res, next) => {

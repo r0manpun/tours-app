@@ -27,7 +27,6 @@ export const signup = async function (name, email, password, passwordConfirm) {
 
 export const verifyEmail = async (token) => {
   try {
-    console.log(token);
     const res = await axios({
       method: 'PATCH',
       url: 'http://127.0.0.1:3000/api/v1/users/verify-email',
@@ -36,7 +35,6 @@ export const verifyEmail = async (token) => {
       },
     });
   } catch (error) {
-    console.error(error);
     alert('Verification failed. Please try again later.');
   }
 };

@@ -69,7 +69,6 @@ reviewSchema.statics.calcAverageRatings = async function (tourId) {
       },
     },
   ]); // as this aggregate returns promise so we have to use await
-  console.log(stats);
 
   // persist the stats to the Tour Model
   try {
@@ -113,7 +112,6 @@ reviewSchema.pre(/^findOneAnd/, async function (next) {
   // this.r = await this.clone().findOne();
   // Fetch the document matching the current query's filter conditions
   this.r = await this.model.findOne(this.getFilter());
-  console.log(this.r);
   next();
 });
 

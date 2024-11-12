@@ -1,0 +1,88 @@
+1> initalize package.json : 
+		npm init  (type in terminal)
+		npm init -y (for auto initalization)
+
+2> install express :
+		npm i express (i for install or simply install)
+
+3> create app.js file and use express from the express package :
+		const express = require('express');
+
+4> make a variable app and assign it to the express so we can use it's property
+		const app = express();
+
+5> create a server that listen to xxxx port 
+	    const port = process.env.PORT ||3000;
+        app.listen(port,()=>{
+			console.log(`app listening to port ${port}...`)
+		})
+
+6> go to the package.json file and inside scripts make a variable start and assign it to nodemon app.js
+	then go to the terminal and run `npm run start` cmd 
+	now your express app is working
+
+7> now we move the app.listen() to another file called server.js and import app form the app.js to this file
+	also we change app.js to script.js inside the package.json file
+
+8> install mongoose :
+		npm i mongoose
+		mongoose is a MongoDB package that helps us to connect to the MongoDB
+		to connect to the mongoDB we need the database url
+	
+		mongoose.connect(DB_URL).then().catch()
+		as this mongoose.connect() returns a Promise we use then to process the data, 
+		and catch to catch any error from/in the database
+
+9> install dotenv :
+		npm i dotenv
+		it is a package that helps us to store constant VARIABLEs that are vunerable and important to the application
+		it helps us to store our secret api keys, email, password, database keys etc...
+		
+		make a file named config.env or simply .env and store the important variables inside it 
+		and these variables are called like this:
+		process.env.VARIABLE_NAME
+		Note: variables in env file are always in uppercase 
+		      and if there are more then one word it is seperated by _ (underscore) like USER_PASSWORD
+
+10> to make a schema we use mongoose schema
+		new mongoose.Schema({
+			name:String,
+			email:String,
+		})
+
+11> using GEOSPATIAL Data for Locations
+		geospatial data is basically data that describes the places in Earth by longitude and latitude
+		we can describe simple points or describe complex geometry like lines, polygon , multi polygon etc
+
+		MongoDB uses a special data format called GeoJson to specify geospatial data
+			location:{
+				type:{
+					type: String,
+					default : 'Point', // geometry 
+					enum: ['Point']
+				},
+				coordinates:[Number] //[lng, lat] expected:array of Number!  
+			} 
+
+12> Create controllers for Creating Reading Updating and Deleting data (CRUD) inside contoller folder
+
+13> Creating router file for passing route to the each user and each tour controllers 
+
+14> Before putting the routes in the app.js file we use json middlware
+		how? === app.use(json()) it is use to parse file into json, as there will be error if there is no json handler middlware
+	 Note:
+	 Returns middleware that only parses json 
+	 and only looks at requests where the Content-Type header matches the type option.
+
+15> then we import the router and use the middleware
+     syntax: const tourRoutes = require('./router/tourRoutes')
+			// after app.use(express.json())
+			 app.use(path, router_name) >>> app.use('/tours', tourRoutes)
+
+16> 
+
+
+
+
+// For server side rendering
+// use templete engine pug

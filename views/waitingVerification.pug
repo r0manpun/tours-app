@@ -1,0 +1,24 @@
+extends base
+
+block content
+  main.main
+    .error
+      .error__title
+        h2.heading-secondary.heading-secondary--error Waiting for Email Verification
+      .error__msg Please verify your email to complete registration.
+        script.
+          setInterval(async () => {
+            try {
+              const res = await fetch('/api/v1/users/check-verification-status', {
+                method: 'GET',
+                credentials: 'include',
+              });
+              const data = await res.json();
+              console.log(data);
+              if (data.verified) {
+                window.location.href = '/';
+              }
+            } catch (error) {
+              console.error(error);
+            }
+          }, 5000); // Checks every 5 seconds

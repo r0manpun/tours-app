@@ -1,0 +1,28 @@
+extends base
+
+mixin labelItem(label,type, text, placeholder,minlength)
+  label.form__label(for=`${label}`) #{ text }
+  input.form__input(
+    id=label,
+    type=type,
+    placeholder=placeholder,
+    required,
+    minlength=minlength
+  )
+
+block content
+  main.main
+    .login-form
+      h2.heading-secondary.ma-bt-lg Sign Up new account
+      form.form.form--signup
+        .form__group
+          +labelItem('name','text','Full Name', 'John Smith')
+        .form__group
+          +labelItem('email','email','Email address', 'you@example.com')
+        .form__group.ma-bt-md
+          +labelItem('password','password','Password', '••••••••','8')
+        .form__group.ma-bt-md
+          +labelItem('password-confirm','password','Confirm Password', '••••••••','8')
+
+        .form__group
+          button.btn.btn--green Sign Up
